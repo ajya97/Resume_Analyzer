@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ResumeAI — Interview Mode</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <link rel="stylesheet" href="/static/css/interview.css" />
+</head>
+<body>
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <nav class="navbar">
+    <div class="nav-brand">
+      <div class="brand-icon">&#9889;</div>
+      <span>Resume<strong>AI</strong></span>
+    </div>
+    <div class="nav-links">
+      <a href="/">&#8592; Back to Analyzer</a>
+    </div>
+  </nav>
+
+  <!-- ── Start Screen ── -->
+  <section class="interview-hero" id="interviewHero">
+    <div class="hero-badge">&#127908; AI Mock Interview</div>
+    <h1 class="hero-title">Ready to <span class="gradient-text">Ace Your Interview?</span></h1>
+    <p class="hero-sub">
+      Upload your resume to generate personalized interview questions,
+      then answer them one by one for AI-powered scoring and feedback.
+    </p>
+
+    <div class="interview-setup-card">
+      <div class="setup-step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Upload Your Resume</h4>
+          <p>We'll generate questions specific to your skills and projects</p>
+          <div class="mini-upload" id="miniDropZone">
+            <span>&#128196;</span> Drop PDF here or <label for="miniFileInput" class="file-label">browse</label>
+            <input type="file" id="miniFileInput" accept=".pdf" hidden />
+          </div>
+          <div class="mini-file-info" id="miniFileInfo" style="display:none">
+            <span>&#128196;</span> <span id="miniFileName">resume.pdf</span>
+            <button id="miniRemove" class="file-remove">&times;</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="setup-step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Select Interview Type</h4>
+          <div class="type-pills">
+            <button class="type-pill active" data-type="all">All Categories</button>
+            <button class="type-pill" data-type="Technical">Technical Only</button>
+            <button class="type-pill" data-type="HR">HR Only</button>
+            <button class="type-pill" data-type="Project-Based">Project-Based</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-primary btn-start" id="startInterviewBtn" disabled>
+        Generate Questions &amp; Start Interview &rarr;
+      </button>
+      <div class="setup-error" id="setupError" style="display:none">
+        <span>&#9888;&#65039;</span> <span id="setupErrorText">Please upload your resume first.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Loading Screen ── -->
+  <section class="loading-screen" id="loadingScreen" style="display:none">
+    <div class="loading-spinner"></div>
+    <h3>Generating Your Interview Questions...</h3>
+    <p>GPT-4 is analyzing your resume and crafting personalized questions</p>
+    <div class="loading-steps">
+      <div class="load-step active" id="ls1">&#128196; Parsing resume...</div>
+      <div class="load-step" id="ls2">&#129504; Analyzing skills...</div>
+      <div class="load-step" id="ls3">&#10067; Generating questions...</div>
+      <div class="load-step" id="ls4">&#9989; Ready!</div>
+    </div>
+  </section>
+
+  <!-- ── Interview Session ── -->
+  <section class="interview-session" id="interviewSession" style="display:none">
+    <!-- Progress Bar -->
+    <div class="iv-progress-wrap">
+      <div class="iv-progress-info">
+        <span id="ivProgressLabel">Question 1 of 16</span>
+        <span id="ivProgressPct">6%</span>
+      </div>
+      <div class="iv-progress-bar">
+        <div class="iv-progress-fill" id="ivProgressFill" style="width:6%"></div>
+      </div>
+    </div>
+
+    <!-- Score Tracker -->
+    <div class="score-tracker">
+      <div class="tracker-item">
+        <span class="tracker-label">Avg Score</span>
+        <span class="tracker-val" id="avgScore">—</span>
+      </div>
+      <div class="tracker-item">
+        <span class="tracker-label">Answered</span>
+        <span class="tracker-val" id="answeredCount">0</span>
+      </div>
+      <div class="tracker-item">
+        <span class="tracker-label">Category</span>
+        <span class="tracker-val" id="currentCategory">—</span>
+      </div>
+    </div>
+
+    <!-- Question Card -->
+    <div class="question-card" id="questionCard">
+      <div class="qcard-meta">
+        <span class="q-num" id="qNum">Q1</span>
+        <span class="q-category" id="qCategory">Technical</span>
+        <span class="q-difficulty" id="qDifficulty">Medium</span>
+      </div>
+      <h2 class="question-text" id="questionText">Loading question...</h2>
+      <p class="followup-hint" id="followupHint" style="display:none"></p>
+    </div>
+
+    <!-- Answer Area -->
+    <div class="answer-area" id="answerArea">
+      <label class="answer-label">Your Answer</label>
+      <textarea
+        id="answerInput"
+        class="answer-textarea"
+        placeholder="Type your answer here... Be specific, use examples from your resume."
+        rows="6"
+      ></textarea>
+      <div class="answer-footer">
+        <span class="char-count" id="charCount">0 characters</span>
+        <button class="btn-primary" id="submitAnswerBtn">Submit Answer &rarr;</button>
+      </div>
+    </div>
+
+    <!-- Feedback Card (shown after submit) -->
+    <div class="feedback-card" id="feedbackCard" style="display:none">
+      <div class="feedback-header">
+        <div class="feedback-score-wrap">
+          <div class="feedback-score" id="fbScore">—</div>
+          <div class="feedback-score-label" id="fbScoreLabel">—</div>
+        </div>
+        <div class="feedback-title">AI Feedback</div>
+      </div>
+
+      <div class="feedback-body">
+        <div class="fb-row">
+          <div class="fb-col">
+            <h4>&#10003; Strengths</h4>
+            <ul id="fbStrengths"></ul>
+          </div>
+          <div class="fb-col">
+            <h4>&#9651; Areas to Improve</h4>
+            <ul id="fbWeaknesses"></ul>
+          </div>
+        </div>
+        <div class="fb-detail">
+          <h4>Detailed Feedback</h4>
+          <p id="fbDetailed"></p>
+        </div>
+        <div class="fb-model">
+          <h4>&#128161; Model Answer</h4>
+          <p id="fbModel"></p>
+        </div>
+        <div class="fb-tip">
+          <span>&#127919;</span> <span id="fbTip"></span>
+        </div>
+      </div>
+
+      <div class="feedback-actions">
+        <button class="btn-primary" id="nextQuestionBtn">Next Question &rarr;</button>
+        <button class="btn-ghost" id="skipQuestionBtn">Skip</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Results Screen ── -->
+  <section class="results-screen" id="resultsScreen" style="display:none">
+    <div class="results-confetti" id="confetti"></div>
+    <div class="results-content">
+      <div class="results-icon">&#127941;</div>
+      <h2>Interview Complete!</h2>
+      <p class="results-name" id="resultsName">Great job, Candidate!</p>
+
+      <div class="final-score-ring">
+        <svg viewBox="0 0 160 160" width="160" height="160">
+          <circle class="ring-bg" cx="80" cy="80" r="68" />
+          <circle class="ring-fill" id="finalRingFill" cx="80" cy="80" r="68"
+                  stroke-dasharray="427" stroke-dashoffset="427"/>
+        </svg>
+        <div class="score-center">
+          <div class="score-number" id="finalScoreNum">—</div>
+          <div class="score-max">/10</div>
+        </div>
+      </div>
+
+      <div class="final-score-label" id="finalScoreLabel">—</div>
+
+      <div class="score-breakdown-grid" id="scoreBreakdownGrid"></div>
+
+      <div class="results-cta">
+        <a href="/" class="btn-primary">Analyze Resume Again</a>
+        <button class="btn-ghost" id="retryInterviewBtn">Retry Interview</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-brand">&#9889; ResumeAI</div>
+    <p>Built with Flask + GPT-4 &middot; Final Year Project &middot; &copy; 2024</p>
+  </footer>
+
+  <script src="/static/js/interview.js"></script>
+</body>
+</html>

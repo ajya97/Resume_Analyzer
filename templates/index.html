@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ResumeAI — AI-Powered Resume Analyzer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+</head>
+<body>
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <nav class="navbar">
+    <div class="nav-brand">
+      <div class="brand-icon">&#9889;</div>
+      <span>Resume<strong>AI</strong></span>
+    </div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#upload">Analyze</a>
+      <a href="/interview" class="btn-nav">Interview Mode</a>
+    </div>
+  </nav>
+
+  <section class="hero" id="home">
+    <div class="hero-badge">&#127891; Built for College Projects &amp; Careers</div>
+    <h1 class="hero-title">
+      Your Resume,<br/>
+      <span class="gradient-text">Supercharged</span><br/>
+      by AI
+    </h1>
+    <p class="hero-sub">
+      Upload your PDF resume and get an instant ATS score, error detection, keyword analysis,
+      skill gap report, and a full AI-powered mock interview — all in one place.
+    </p>
+    <div class="hero-cta">
+      <a href="#upload" class="btn-primary">Analyze My Resume &rarr;</a>
+      <a href="/interview" class="btn-ghost">Try Interview Mode</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">10+</span><span class="stat-label">Analysis Points</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-num">GPT-4</span><span class="stat-label">Powered Analysis</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-num">4</span><span class="stat-label">Interview Categories</span></div>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="features-grid">
+      <div class="feature-card"><div class="feature-icon">&#128202;</div><h3>ATS Score</h3><p>Get a detailed 100-point ATS score with per-section breakdown and actionable tips.</p></div>
+      <div class="feature-card"><div class="feature-icon">&#128269;</div><h3>Error Detection</h3><p>Find missing sections, weak verbs, formatting issues, and critical mistakes.</p></div>
+      <div class="feature-card"><div class="feature-icon">&#129504;</div><h3>Skill Gap Analysis</h3><p>GPT-4 identifies your skill gaps and recommends exactly what to learn next.</p></div>
+      <div class="feature-card"><div class="feature-icon">&#127919;</div><h3>Keyword Optimization</h3><p>Discover missing ATS keywords and role-specific terms to beat the algorithm.</p></div>
+      <div class="feature-card"><div class="feature-icon">&#127908;</div><h3>Mock Interview</h3><p>AI generates personalized interview questions from your resume and scores your answers.</p></div>
+      <div class="feature-card"><div class="feature-icon">&#9889;</div><h3>Instant Results</h3><p>Full analysis in under 30 seconds. No sign-up required. Just upload and go.</p></div>
+    </div>
+  </section>
+
+  <section class="upload-section" id="upload">
+    <div class="section-label">STEP 1 — UPLOAD YOUR RESUME</div>
+    <h2 class="section-title">Drop Your PDF. <span class="gradient-text">We'll Do The Rest.</span></h2>
+    <p class="section-sub">Supports PDF files up to 5MB. Your data is processed securely and never stored.</p>
+
+    <div class="upload-card" id="uploadCard">
+      <div class="upload-zone" id="dropZone">
+        <div class="upload-icon" id="uploadIcon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        </div>
+        <div class="upload-text">
+          <p class="upload-main">Drag &amp; drop your resume here</p>
+          <p class="upload-sub">or <label for="fileInput" class="file-label">browse to upload</label></p>
+        </div>
+        <p class="upload-hint">PDF only &middot; Max 5MB</p>
+        <input type="file" id="fileInput" accept=".pdf" hidden />
+      </div>
+
+      <div class="file-selected" id="fileSelected" style="display:none">
+        <div class="file-icon">&#128196;</div>
+        <div class="file-info">
+          <p class="file-name" id="fileName">resume.pdf</p>
+          <p class="file-size" id="fileSize">245 KB</p>
+        </div>
+        <button class="file-remove" id="fileRemove" title="Remove">&times;</button>
+      </div>
+
+      <div class="progress-wrap" id="progressWrap" style="display:none">
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+        <p class="progress-label" id="progressLabel">Uploading...</p>
+      </div>
+
+      <button class="btn-analyze" id="analyzeBtn" disabled>
+        <span id="analyzeBtnText">Select a PDF to analyze</span>
+        <span class="btn-loader" id="btnLoader" style="display:none"></span>
+      </button>
+    </div>
+
+    <div class="error-banner" id="errorBanner" style="display:none">
+      <span>&#9888;&#65039;</span> <span id="errorText">Something went wrong.</span>
+    </div>
+  </section>
+
+  <section class="results-section" id="resultsSection" style="display:none">
+    <div class="results-header">
+      <h2>Analysis Complete for <span class="gradient-text" id="candidateName">Your Resume</span></h2>
+      <div class="results-actions">
+        <a href="/interview" class="btn-primary" id="startInterviewBtn">&#127908; Start Mock Interview</a>
+        <button class="btn-ghost" id="analyzeAnotherBtn">Upload Another</button>
+      </div>
+    </div>
+
+    <div class="score-hero">
+      <div class="score-ring-wrap">
+        <svg class="score-ring" viewBox="0 0 160 160" width="160" height="160">
+          <circle class="ring-bg" cx="80" cy="80" r="68" />
+          <circle class="ring-fill" id="scoreRingFill" cx="80" cy="80" r="68"
+                  stroke-dasharray="427" stroke-dashoffset="427"/>
+        </svg>
+        <div class="score-center">
+          <div class="score-number" id="scoreNumber">0</div>
+          <div class="score-max">/100</div>
+        </div>
+      </div>
+      <div class="score-meta">
+        <div class="score-rating" id="scoreRating">—</div>
+        <p class="score-desc">ATS Compatibility Score</p>
+        <div class="score-tags" id="scoreTags"></div>
+      </div>
+    </div>
+
+    <div class="tabs" id="resultsTabs">
+      <button class="tab active" data-tab="overview">&#128202; Overview</button>
+      <button class="tab" data-tab="errors">&#128680; Errors</button>
+      <button class="tab" data-tab="keywords">&#127919; Keywords</button>
+      <button class="tab" data-tab="skills">&#129504; Skill Gap</button>
+      <button class="tab" data-tab="suggestions">&#128161; Suggestions</button>
+    </div>
+
+    <div class="tab-content active" id="tab-overview">
+      <div class="overview-grid">
+        <div class="panel">
+          <h3 class="panel-title">Section Breakdown</h3>
+          <div class="section-scores" id="sectionScores"></div>
+        </div>
+        <div class="panel">
+          <h3 class="panel-title">Extracted Profile</h3>
+          <div class="profile-info" id="profileInfo"></div>
+        </div>
+        <div class="panel panel-wide">
+          <h3 class="panel-title">Missing Sections</h3>
+          <div class="missing-list" id="missingSections"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-errors">
+      <div class="errors-list" id="errorsList"></div>
+    </div>
+
+    <div class="tab-content" id="tab-keywords">
+      <div class="keywords-grid" id="keywordsGrid"></div>
+    </div>
+
+    <div class="tab-content" id="tab-skills">
+      <div class="skills-grid" id="skillsGrid"></div>
+    </div>
+
+    <div class="tab-content" id="tab-suggestions">
+      <div class="suggestions-list" id="suggestionsList"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-brand">&#9889; ResumeAI</div>
+    <p>Built with Flask + GPT-4 &middot; Final Year Project &middot; &copy; 2024</p>
+  </footer>
+
+  <script src="/static/js/main.js"></script>
+</body>
+</html>
