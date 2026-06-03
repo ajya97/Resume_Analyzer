@@ -12,6 +12,7 @@ def get_openai_client():
     """Initialize and return the OpenAI client."""
     base_url = os.getenv("BASE_URL")
     api_key = os.getenv("OPENAI_API_KEY")
+    print(f"Initializing OpenAI client with base_url={base_url} and api_key={'set' if api_key else 'not set'}")
     if not api_key and not base_url:
         raise ValueError("OPENAI_API_KEY or BASE_URL not set in environment variables")
     return OpenAI(api_key=api_key, base_url=base_url)
